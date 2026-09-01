@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Login - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-5">
+            <div class="card-header bg-primary text-white text-center" id="login-header">
+                <h4 class="mb-0" id="login-title">Login</h4>
+            </div>
+            
+            <div class="d-flex border-bottom">
+                <button type="button" class="btn flex-fill rounded-0 fw-bold py-3 text-primary border-bottom border-primary border-3" id="tab-buyer" onclick="setLoginRole('buyer')">
+                    🛒 Customer
+                </button>
+                <button type="button" class="btn flex-fill rounded-0 fw-bold py-3 text-muted" id="tab-farmer" onclick="setLoginRole('farmer')">
+                    👨‍🌾 Farmer
+                </button>
+                <button type="button" class="btn flex-fill rounded-0 fw-bold py-3 text-muted" id="tab-agro" onclick="setLoginRole('agro')">
+                    🏬 Agro Dealer
+                </button>
+            </div>
+            
+            <div class="card-body px-4 py-4">
+                <form method="post">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger p-2 mb-3">
+                        {% for error in form.non_field_errors %}
+                            <p class="mb-0 small"><i class="bi bi-exclamation-triangle-fill"></i> {{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% for field in form %}
+                        {% if field.is_hidden %}
+                            {{ field }}
+                        {% else %}
+                        <div class="mb-3">
+                            {{ field.label_tag }}
+                            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="form-control" id="{{ field.id_for_label }}">
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3 bg-light">
+                Don't have an account? <a href="{% url 'signup' %}" class="fw-bold text-decoration-none">Sign up here</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function setLoginRole(role) {
+    const tabBuyer = document.getElementById('tab-buyer');
+    const tabFarmer = document.getElementById('tab-farmer');
+    const tabAgro = document.getElementById('tab-agro');
+    const header = document.getElementById('login-header');
+    const title = document.getElementById('login-title');
+    
+    // Reset all tabs
+    [tabBuyer, tabFarmer, tabAgro].forEach(tab => {
+        tab.classList.remove('text-primary', 'border-bottom', 'border-primary', 'border-3');
+        tab.classList.add('text-muted');
+    });
+    
+    document.querySelector('input[name="login_role"]').value = role;
+    
+    if (role === 'farmer') {
+        tabFarmer.classList.remove('text-muted');
+        tabFarmer.classList.add('text-primary', 'border-bottom', 'border-primary', 'border-3');
+        header.className = 'card-header bg-success text-white text-center';
+        title.innerText = 'Farmer Login';
+    } else if (role === 'agro') {
+        tabAgro.classList.remove('text-muted');
+        tabAgro.classList.add('text-primary', 'border-bottom', 'border-primary', 'border-3');
+        header.className = 'card-header bg-dark text-white text-center';
+        title.innerText = 'Agro Dealer Login';
+    } else {
+        tabBuyer.classList.remove('text-muted');
+        tabBuyer.classList.add('text-primary', 'border-bottom', 'border-primary', 'border-3');
+        header.className = 'card-header bg-primary text-white text-center';
+        title.innerText = 'Customer Login';
+    }
+}
+</script>
+{% endblock %}

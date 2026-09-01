@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block title %}Signup - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Join Agri Shop</h4>
+            </div>
+            <div class="card-body">
+                
+                <h5 class="text-center mb-4">Choose your Account Type</h5>
+                
+                <div class="row mb-4 px-3">
+                    <div class="col-4 px-1">
+                        <div class="card h-100 border-2 role-card text-center py-2" id="role-farmer" style="cursor: pointer; border-color: #cbd5e1;">
+                            <div class="card-body p-2">
+                                <h1 class="display-6">👨‍🌾</h1>
+                                <h6 class="card-title fw-bold">Farmer</h6>
+                                <small class="text-muted" style="font-size: 0.7rem;">Sell produce</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 px-1">
+                        <div class="card h-100 border-2 role-card text-center py-2 border-success bg-light" id="role-buyer" style="cursor: pointer;">
+                            <div class="card-body p-2">
+                                <h1 class="display-6">🛒</h1>
+                                <h6 class="card-title fw-bold">Customer</h6>
+                                <small class="text-muted" style="font-size: 0.7rem;">Buy produce</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 px-1">
+                        <div class="card h-100 border-2 role-card text-center py-2" id="role-agro" style="cursor: pointer; border-color: #cbd5e1;">
+                            <div class="card-body p-2">
+                                <h1 class="display-6">🏬</h1>
+                                <h6 class="card-title fw-bold">Dealer</h6>
+                                <small class="text-muted" style="font-size: 0.7rem;">Sell medicine</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" id="signupForm">
+                    {% csrf_token %}
+                    
+                    <div style="display: none;" id="hidden-role-field">
+                        <!-- We will let Django render it, but hide the specific row using CSS -->
+                    </div>
+                    
+                    <div class="signup-fields">
+                        {{ form.as_p }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-lg w-100 mt-3 shadow-sm fw-bold">Sign Up</button>
+                </form>
+            </div>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const farmerCard = document.getElementById('role-farmer');
+                    const buyerCard = document.getElementById('role-buyer');
+                    const roleSelect = document.querySelector('select[name="role"]');
+                    
+                    // Field containers (Django renders as <p> tags wrapping the inputs)
+                    const getFieldContainer = (id) => {
+                        const input = document.getElementById(id);
+                        return input ? input.closest('p') : null;
+                    };
+                    
+                    const addressField = getFieldContainer('id_address');
+                    const villageField = getFieldContainer('id_village_or_city');
+                    const stateField = getFieldContainer('id_state');
+                    
+                    // Hide the default role field container
+                    if (roleSelect) {
+                        roleSelect.closest('p').style.display = 'none';
+                    }
+                    
+                    function updateFields(role) {
+                        if (role === 'FARMER') {
+                            if (villageField) villageField.style.display = 'block';
+                            if (stateField) stateField.style.display = 'block';
+                            if (addressField) addressField.style.display = 'none';
+                        } else {
+                            if (villageField) villageField.style.display = 'none';
+                            if (stateField) stateField.style.display = 'none';
+                            if (addressField) addressField.style.display = 'block';
+                        }
+                    }
+                    
+                    const agroCard = document.getElementById('role-agro');
+                    
+                    const resetCards = () => {
+                        [farmerCard, buyerCard, agroCard].forEach(card => {
+                            card.classList.remove('border-success', 'bg-light');
+                            card.style.borderColor = '#cbd5e1';
+                        });
+                    };
+                    
+                    farmerCard.addEventListener('click', function() {
+                        resetCards();
+                        farmerCard.classList.add('border-success', 'bg-light');
+                        farmerCard.style.borderColor = '';
+                        if (roleSelect) roleSelect.value = 'FARMER';
+                        updateFields('FARMER');
+                    });
+                    
+                    buyerCard.addEventListener('click', function() {
+                        resetCards();
+                        buyerCard.classList.add('border-success', 'bg-light');
+                        buyerCard.style.borderColor = '';
+                        if (roleSelect) roleSelect.value = 'BUYER';
+                        updateFields('BUYER');
+                    });
+                    
+                    agroCard.addEventListener('click', function() {
+                        resetCards();
+                        agroCard.classList.add('border-success', 'bg-light');
+                        agroCard.style.borderColor = '';
+                        if (roleSelect) roleSelect.value = 'AGRO_DEALER';
+                        updateFields('AGRO_DEALER');
+                    });
+                    
+                    // Initialize Default State (Assume Buyer is selected first or check current value)
+                    if (roleSelect) {
+                        updateFields(roleSelect.value || 'BUYER');
+                    } else {
+                        updateFields('BUYER');
+                    }
+                });
+            </script>
+            <style>
+                .role-card { transition: all 0.2s ease; }
+                .role-card:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+            </style>
+            <div class="card-footer text-center">
+                Already have an account? <a href="{% url 'login' %}">Login here</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

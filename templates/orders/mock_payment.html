@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}Razorpay Secure - Agri Shop{% endblock %}
+
+{% block content %}
+<!-- Razorpay Style Payment UI -->
+<div class="row justify-content-center mt-5">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0;">
+            <!-- Header -->
+            <div class="card-header bg-primary text-white py-3 border-0 d-flex justify-content-between align-items-center" style="background-color: #3399cc !important;">
+                <div class="d-flex align-items-center">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="bi bi-basket-fill text-success fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-bold">Agri Shop Gateway</h5>
+                        <small class="text-white-50">Order #{{ order.id }}</small>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <h4 class="mb-0 fw-bold">₹{{ order.total_amount }}</h4>
+                </div>
+            </div>
+
+            <!-- Body Area -->
+            <div class="card-body p-0 d-flex" style="min-height: 400px;">
+                <!-- Sidebar -->
+                <div class="bg-light border-end w-35 p-3" style="width: 35%; background-color: #f7fafc !important;">
+                    <ul class="nav flex-column nav-pills" id="paymentTabs">
+                        <li class="nav-item mb-2">
+                            <a class="nav-link active fw-bold text-dark d-flex align-items-center" data-bs-toggle="pill" href="#upi"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" width="20" class="me-2"> UPI / QR</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link fw-bold text-dark d-flex align-items-center" data-bs-toggle="pill" href="#card"><i class="bi bi-credit-card me-2"></i> Card</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link fw-bold text-dark d-flex align-items-center" data-bs-toggle="pill" href="#netbanking"><i class="bi bi-bank me-2"></i> Netbanking</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content Area -->
+                <div class="w-65 p-4 tab-content position-relative" style="width: 65%;">
+                    
+                    <!-- UPI Tab -->
+                    <div class="tab-pane fade show active h-100 text-center" id="upi">
+                        <h6 class="fw-bold mb-4">Pay with UPI Apps</h6>
+                        <div class="border rounded p-3 mb-4 bg-light mx-auto" style="width: 150px; height: 150px;">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=agrishop@ybl&pn=Agri%20Shop&am={{ order.total_amount }}" class="img-fluid" alt="UPI QR">
+                        </div>
+                        <p class="small text-muted mb-4">Scan QR with any UPI app</p>
+                        
+                        <form method="post" id="payFormUpi">
+                            {% csrf_token %}
+                            <button type="button" class="btn btn-primary w-100 fw-bold mock-pay-btn" style="background-color: #3399cc; border-color: #3399cc;">Simulate Payment Success</button>
+                        </form>
+                    </div>
+
+                    <!-- Card Tab -->
+                    <div class="tab-pane fade" id="card">
+                        <h6 class="fw-bold mb-4">Enter Card Details</h6>
+                        <form method="post" id="payFormCard">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Card Number</label>
+                                <input type="text" class="form-control" value="4111 1111 1111 1111" readonly>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <label class="form-label text-muted small">Expiry</label>
+                                    <input type="text" class="form-control" value="12/28" readonly>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label text-muted small">CVV</label>
+                                    <input type="password" class="form-control" value="123" readonly>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary w-100 fw-bold mt-3 mock-pay-btn" style="background-color: #3399cc; border-color: #3399cc;">Pay ₹{{ order.total_amount }}</button>
+                        </form>
+                    </div>
+
+                    <!-- Netbanking Tab -->
+                    <div class="tab-pane fade text-center" id="netbanking">
+                        <h6 class="fw-bold mb-4">Select Bank</h6>
+                        <div class="row g-2 mb-4">
+                            <div class="col-6"><div class="border rounded p-2 text-primary fw-bold bg-light">SBI</div></div>
+                            <div class="col-6"><div class="border rounded p-2 text-danger fw-bold bg-light">HDFC</div></div>
+                            <div class="col-6"><div class="border rounded p-2 text-primary fw-bold bg-light">ICICI</div></div>
+                            <div class="col-6"><div class="border rounded p-2 text-dark fw-bold bg-light">Axis</div></div>
+                        </div>
+                        <form method="post" id="payFormNet">
+                            {% csrf_token %}
+                            <button type="button" class="btn btn-primary w-100 fw-bold mock-pay-btn" style="background-color: #3399cc; border-color: #3399cc;">Proceed to Bank</button>
+                        </form>
+                    </div>
+                    
+                    <!-- Loading Overlay (Hidden initially) -->
+                    <div id="paymentLoader" class="position-absolute top-0 start-0 w-100 h-100 bg-white d-none flex-column align-items-center justify-content-center z-3">
+                        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+                        <h5 class="text-primary fw-bold">Processing Payment...</h5>
+                        <p class="text-muted small">Please do not refresh or close this window.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer bg-light text-center border-top py-2 d-flex justify-content-center align-items-center gap-2">
+                <i class="bi bi-shield-lock-fill text-secondary"></i>
+                <small class="text-secondary fw-bold">Secured by AgriPay (Mock)</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const payBtns = document.querySelectorAll('.mock-pay-btn');
+    const loader = document.getElementById('paymentLoader');
+    
+    payBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = this.closest('form');
+            
+            // Show Loader
+            loader.classList.remove('d-none');
+            loader.classList.add('d-flex');
+            
+            // Simulate 2 second network delay
+            setTimeout(() => {
+                form.submit();
+            }, 2000);
+        });
+    });
+});
+</script>
+{% endblock %}

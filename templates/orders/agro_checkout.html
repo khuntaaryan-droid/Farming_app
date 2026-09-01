@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Agro Store{% endblock %}
+
+{% block content %}
+<div class="row mt-4 mb-5 justify-content-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-4"><i class="bi bi-shield-check text-success"></i> Agro Store Checkout</h2>
+        
+        <div class="card shadow-sm border-0 bg-light">
+            <div class="card-body p-4">
+                <form method="POST" action="{% url 'agro_checkout' %}">
+                    {% csrf_token %}
+                    
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Delivery Details</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Delivery Address</label>
+                        <textarea name="delivery_address" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" name="phone" class="form-control" required placeholder="e.g. 9876543210">
+                    </div>
+                    
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Payment Method</h5>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-check border p-3 rounded bg-white shadow-sm mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" id="pay_cod" value="COD" checked>
+                                <label class="form-check-label" for="pay_cod">
+                                    Cash on Delivery (COD)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check border p-3 rounded bg-white shadow-sm mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" id="pay_online" value="ONLINE">
+                                <label class="form-check-label" for="pay_online">
+                                    Online Payment (Razorpay)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm">Place Order (₹{{ total_cost }})</button>
+                        <a href="{% url 'agro_cart_view' %}" class="btn btn-outline-secondary">Back to Cart</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

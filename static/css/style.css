@@ -1,0 +1,119 @@
+/* Custom Premium Styles for Agri Shop */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+}
+
+/* Navbar Enhancements */
+.navbar {
+    background: linear-gradient(135deg, #1e7d32 0%, #155d27 100%) !important;
+    box-shadow: 0 4px 12px rgba(30, 125, 50, 0.15);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 1.5rem;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+.card-img-top, .card img {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    object-fit: cover;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #208b3a 100%);
+    border: none;
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #218838 0%, #196f2d 100%);
+    box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    border: none;
+    box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0b5ed7 0%, #094ba3 100%);
+    box-shadow: 0 6px 12px rgba(13, 110, 253, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Badges */
+.badge {
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.text-success {
+    color: #1e7d32 !important;
+}
+
+/* Tables */
+.table {
+    vertical-align: middle;
+}
+.table-hover tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+/* Hero Section / Alerts */
+.alert {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Custom Input Fields */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    padding: 0.6rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+}

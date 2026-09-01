@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}Invoice #{{ order.id }} - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- Print Button -->
+        <div class="d-flex justify-content-between mb-3 d-print-none">
+            <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Order</a>
+            <button onclick="window.print()" class="btn btn-primary"><i class="bi bi-printer"></i> Print / Save PDF</button>
+        </div>
+
+        <div class="card shadow-sm border-0 p-4" id="invoice-card">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-sm-6">
+                    <h2 class="text-success fw-bold mb-0"><i class="bi bi-basket-fill"></i> Agri Shop</h2>
+                    <p class="text-muted mb-0">The Farmer-to-Buyer Marketplace</p>
+                </div>
+                <div class="col-sm-6 text-sm-end text-start mt-3 mt-sm-0">
+                    <h4 class="text-uppercase text-muted">Invoice</h4>
+                    <strong>Order ID:</strong> #{{ order.id }}<br>
+                    <strong>Date:</strong> {{ order.created_at|date:"M d, Y" }}
+                </div>
+            </div>
+            
+            <hr>
+
+            <!-- Addresses -->
+            <div class="row my-4">
+                <div class="col-sm-6">
+                    <h6 class="text-muted text-uppercase fw-bold">Billed To:</h6>
+                    <strong>{{ order.buyer.get_full_name|default:order.buyer.username }}</strong><br>
+                    Phone: {{ order.phone }}<br>
+                    Delivery Address: <br>
+                    <span class="text-break">{{ order.delivery_address }}</span>
+                </div>
+                <div class="col-sm-6 text-sm-end text-start mt-3 mt-sm-0">
+                    <h6 class="text-muted text-uppercase fw-bold">Payment Details:</h6>
+                    <strong>Method:</strong> {{ order.get_payment_method_display }}<br>
+                    <strong>Status:</strong> 
+                    {% if order.is_paid %}
+                        <span class="text-success fw-bold">PAID</span>
+                    {% else %}
+                        <span class="text-warning fw-bold">UNPAID / COD</span>
+                    {% endif %}
+                    <br>
+                    <strong>Subscription:</strong> {{ order.get_subscription_frequency_display }}
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <div class="table-responsive my-4">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Item Description</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Price</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <!-- If user is farmer, they only see their own items on the invoice, if they want a separate one. But typically an invoice is for the buyer. -->
+                        {% if user == order.buyer or user.role == 'ADMIN' or item.farmer == user %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.product.name }}</strong><br>
+                                <small class="text-muted">Farmer: {{ item.farmer.username }}</small>
+                            </td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-end">₹{{ item.price_per_unit }}</td>
+                            <td class="text-end fw-bold">₹{{ item.total_price }}</td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totals -->
+            <div class="row">
+                <div class="col-sm-6">
+                    <p class="text-muted small">
+                        Thank you for shopping directly with farmers. Your purchase helps support local agriculture!
+                    </p>
+                </div>
+                <div class="col-sm-6 text-end">
+                    <table class="table table-borderless table-sm">
+                        <tr>
+                            <td>Subtotal:</td>
+                            <td class="text-end">₹{{ order.total_amount|add:"-"|add:order.delivery_cost }}</td>
+                        </tr>
+                        <tr>
+                            <td>Delivery Cost:</td>
+                            <td class="text-end">₹{{ order.delivery_cost }}</td>
+                        </tr>
+                        <tr class="border-top fs-5">
+                            <td class="fw-bold text-success">Grand Total:</td>
+                            <td class="fw-bold text-success text-end">₹{{ order.total_amount }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <hr class="mt-4">
+            <div class="text-center text-muted small">
+                Agri Shop Platform | Generated on {% now "F j, Y H:i" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #invoice-card, #invoice-card * {
+        visibility: visible;
+    }
+    #invoice-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none !important;
+    }
+    .d-print-none {
+        display: none !important;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}My Orders - Agri Shop{% endblock %}
+
+{% block content %}
+<h3 class="mb-4">My Orders</h3>
+
+{% if orders %}
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total Items</th>
+                <th>Total Amount</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>
+                    #{{ order.id }}
+                    {% if order.subscription_frequency != 'ONE_TIME' %}
+                        <br><span class="badge bg-primary mt-1">{{ order.get_subscription_frequency_display }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ order.created_at|date:"M d, Y" }}
+                    <br>
+                    <small class="text-muted">
+                        {% if order.is_paid %}<span class="text-success"><i class="bi bi-check-circle-fill"></i> Paid</span>{% else %}COD{% endif %}
+                    </small>
+                </td>
+                <td>
+                    <span class="badge 
+                        {% if order.status == 'PENDING' %}bg-warning text-dark
+                        {% elif order.status == 'CONFIRMED' or order.status == 'SHIPPED' %}bg-info
+                        {% elif order.status == 'DELIVERED' %}bg-success
+                        {% else %}bg-secondary{% endif %}">
+                        {{ order.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ order.items.count }}</td>
+                <td>₹{{ order.total_amount }}</td>
+                <td>
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-success">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    You haven't placed any orders yet. <a href="{% url 'product_list' %}" class="alert-link">Start shopping</a>.
+</div>
+{% endif %}
+{% endblock %}

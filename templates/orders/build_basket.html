@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Build Custom Basket - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-12 text-center mb-5">
+        <h2 class="fw-bold text-success"><i class="bi bi-basket-fill"></i> Build Your Custom Weekly Basket</h2>
+        <p class="text-muted">Select the vegetables and quantities you need every week. We will bundle them and deliver them to your doorstep!</p>
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100 shadow-sm hover-shadow border-0 rounded-4">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top p-2 rounded-4" alt="{{ product.name }}" style="height: 150px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light p-2 rounded-4 d-flex align-items-center justify-content-center text-muted" style="height: 150px;">
+                        <i class="bi bi-image fs-1"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold mb-1">{{ product.name }}</h5>
+                    <p class="text-success fw-bold mb-3">₹{{ product.price_per_unit }} <small class="text-muted fw-normal">/ {{ product.get_unit_display }}</small></p>
+                    
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">Qty</span>
+                        <input type="number" step="0.5" class="form-control" name="qty_{{ product.id }}" min="0" max="{{ product.quantity_available }}" placeholder="0">
+                    </div>
+                    <small class="text-muted mt-1 d-block">{{ product.quantity_available }} {{ product.get_unit_display }} available</small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p>No products available right now.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if products %}
+    <div class="position-sticky bottom-0 bg-white p-3 shadow-lg rounded-top-4 mt-5 border-top d-flex justify-content-between align-items-center z-3">
+        <div>
+            <h5 class="mb-0 fw-bold">Ready to order?</h5>
+            <small class="text-muted">You can review your basket on the checkout page.</small>
+        </div>
+        <button type="submit" class="btn btn-success btn-lg fw-bold px-5 shadow-sm rounded-pill">Build Basket & Continue <i class="bi bi-arrow-right"></i></button>
+    </div>
+    {% endif %}
+</form>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}

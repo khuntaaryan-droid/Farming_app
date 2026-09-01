@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% block title %}Agro Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4 mt-3">
+    <div class="col-md-6">
+        <h2 class="text-dark fw-bold mb-0">Agro Order #{{ order.id }}</h2>
+        <p class="text-muted mb-0">Placed on {{ order.created_at|date:"F d, Y" }}</p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        {% if is_dealer %}
+            <a href="{% url 'agro_dashboard' %}" class="btn btn-outline-dark"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+        {% else %}
+            <a href="{% url 'farmer_sales' %}" class="btn btn-outline-dark"><i class="bi bi-arrow-left"></i> Back to My Sales</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tracking Timeline (Reusing Logic) -->
+<style>
+    .timeline-steps {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        padding: 0 2rem;
+    }
+    .timeline-steps::before {
+        content: "";
+        position: absolute;
+        top: 30%;
+        left: 5%;
+        width: 90%;
+        height: 4px;
+        background-color: #e9ecef;
+        z-index: 0;
+    }
+    .timeline-step {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+    .timeline-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #fff;
+        border: 4px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px auto;
+        color: #adb5bd;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+    .timeline-step.active .timeline-icon {
+        border-color: #198754;
+        color: #198754;
+    }
+    .timeline-step.completed .timeline-icon {
+        background-color: #198754;
+        border-color: #198754;
+        color: #fff;
+    }
+    .timeline-step.cancelled .timeline-icon {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+    }
+    
+    {% if order.status != 'PENDING' and order.status != 'CANCELLED' %}
+    .timeline-steps::before {
+        background: linear-gradient(to right, #198754 
+            {% if order.status == 'CONFIRMED' %} 33% 
+            {% elif order.status == 'SHIPPED' %} 66% 
+            {% elif order.status == 'DELIVERED' %} 100% 
+            {% else %} 0% {% endif %}, 
+            #e9ecef 0%);
+    }
+    {% endif %}
+</style>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm border-0 rounded-4 py-4">
+            <div class="timeline-steps">
+                <div class="timeline-step completed">
+                    <div class="timeline-icon"><i class="bi bi-cart-check-fill"></i></div>
+                    <p class="mb-0 fw-bold">Placed</p>
+                </div>
+                
+                {% if order.status == 'CANCELLED' %}
+                <div class="timeline-step cancelled">
+                    <div class="timeline-icon"><i class="bi bi-x-circle-fill"></i></div>
+                    <p class="mb-0 fw-bold text-danger">Cancelled</p>
+                </div>
+                {% else %}
+                <div class="timeline-step {% if order.status == 'CONFIRMED' or order.status == 'SHIPPED' or order.status == 'DELIVERED' %}completed{% elif order.status == 'PENDING' %}active{% endif %}">
+                    <div class="timeline-icon"><i class="bi bi-box-seam"></i></div>
+                    <p class="mb-0 fw-bold">Confirmed</p>
+                </div>
+                <div class="timeline-step {% if order.status == 'SHIPPED' or order.status == 'DELIVERED' %}completed{% elif order.status == 'CONFIRMED' %}active{% endif %}">
+                    <div class="timeline-icon"><i class="bi bi-truck"></i></div>
+                    <p class="mb-0 fw-bold">Shipped</p>
+                </div>
+                <div class="timeline-step {% if order.status == 'DELIVERED' %}completed{% elif order.status == 'SHIPPED' %}active{% endif %}">
+                    <div class="timeline-icon"><i class="bi bi-house-door-fill"></i></div>
+                    <p class="mb-0 fw-bold">Delivered</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Order Items</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Product</th>
+                            <th>Dealer</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th class="text-end pe-3">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td class="ps-3">
+                                <strong>{{ item.agro_product.name }}</strong>
+                            </td>
+                            <td>{{ item.dealer.get_full_name|default:item.dealer.username }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>₹{{ item.price_per_unit }}</td>
+                            <td class="text-end pe-3 fw-bold">₹{{ item.total_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="4" class="text-end fw-bold">Grand Total:</td>
+                            <td class="text-end pe-3 fw-bold text-success fs-5">₹{{ order.total_amount }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Delivery Details -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Delivery Details</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Farmer (Buyer):</strong> {{ order.farmer.get_full_name|default:order.farmer.username }}</p>
+                <p><strong>Phone:</strong> {{ order.phone }}</p>
+                <p><strong>Address:</strong><br>{{ order.delivery_address|linebreaksbr }}</p>
+                <p><strong>Payment:</strong> 
+                    {% if order.is_paid %}
+                        <span class="badge bg-success">Paid ({{ order.payment_method }})</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Unpaid ({{ order.payment_method }})</span>
+                    {% endif %}
+                </p>
+                
+                <hr>
+                <div class="d-grid">
+                    <a href="https://wa.me/91{{ order.phone|default:'0000000000' }}?text=Hello%20regarding%20Agro%20Order%20%23{{ order.id }}" target="_blank" class="btn text-white" style="background-color: #25D366;">
+                        <i class="bi bi-whatsapp"></i> Contact via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status Update for Dealer -->
+        {% if is_dealer %}
+        <div class="card shadow-sm border-0 bg-light">
+            <div class="card-body">
+                <h6 class="fw-bold text-success mb-3"><i class="bi bi-pencil-square"></i> Update Order Status</h6>
+                <form method="post" action="{% url 'update_agro_order_status' order.id %}">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <select name="status" class="form-select border-success">
+                            <option value="PENDING" {% if order.status == 'PENDING' %}selected{% endif %}>Pending</option>
+                            <option value="CONFIRMED" {% if order.status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+                            <option value="SHIPPED" {% if order.status == 'SHIPPED' %}selected{% endif %}>Shipped</option>
+                            <option value="DELIVERED" {% if order.status == 'DELIVERED' %}selected{% endif %}>Delivered</option>
+                            <option value="CANCELLED" {% if order.status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                        <button type="submit" class="btn btn-success px-4">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

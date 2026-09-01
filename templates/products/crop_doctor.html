@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}AI Crop Doctor - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0;">
+            <div class="card-header bg-success text-white py-4 border-0 text-center">
+                <h3 class="fw-bold mb-0"><i class="bi bi-robot"></i> AI Crop Doctor</h3>
+                <p class="text-white-50 mt-2 mb-0">Upload a photo of your diseased crop for instant AI diagnosis</p>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                {% if result %}
+                    <!-- Results Area -->
+                    <div class="text-center mb-4">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-check-lg fs-3"></i>
+                        </div>
+                        <h4 class="fw-bold text-success">Analysis Complete</h4>
+                        <p class="text-muted">For crop: {{ result.crop_name }}</p>
+                    </div>
+                    
+                    <div class="alert alert-warning border-warning shadow-sm" role="alert">
+                        <h5 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i> Diagnosis & Recommendation</h5>
+                        <hr>
+                        <p class="mb-0 fs-5">{{ result.ai_diagnosis }}</p>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'crop_doctor' %}" class="btn btn-outline-success">Analyze Another Crop</a>
+                    </div>
+                {% else %}
+                    <!-- Upload Form Area -->
+                    <form method="post" enctype="multipart/form-data" id="cropDoctorForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Crop Name</label>
+                            {{ form.crop_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Describe the Symptoms</label>
+                            {{ form.symptoms }}
+                            <div class="form-text">Example: Yellow spots on leaves, dry stem, etc.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Upload Photo</label>
+                            {{ form.image }}
+                        </div>
+                        
+                        <!-- AI Scanner Loader (Hidden) -->
+                        <div id="aiScanner" class="d-none text-center py-4">
+                            <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;"></div>
+                            <h5 class="text-success fw-bold mt-3">Scanning Image with AI...</h5>
+                            <p class="text-muted small">Checking our database of 10,000+ crop diseases.</p>
+                        </div>
+
+                        <button type="button" id="scanBtn" class="btn btn-success btn-lg w-100 shadow-sm fw-bold">
+                            <i class="bi bi-magic me-2"></i> Run AI Diagnosis
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const scanBtn = document.getElementById('scanBtn');
+    if(scanBtn) {
+        scanBtn.addEventListener('click', function(e) {
+            const form = document.getElementById('cropDoctorForm');
+            // Hide form elements
+            Array.from(form.children).forEach(child => {
+                if(child.id !== 'aiScanner' && child.tagName !== 'INPUT' && child.name !== 'csrfmiddlewaretoken') {
+                    child.classList.add('d-none');
+                }
+            });
+            scanBtn.classList.add('d-none');
+            
+            // Show Scanner
+            document.getElementById('aiScanner').classList.remove('d-none');
+            
+            // Simulate AI processing delay
+            setTimeout(() => {
+                form.submit();
+            }, 3000);
+        });
+    }
+});
+</script>
+{% endblock %}

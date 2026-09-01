@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% block title %}Shop Produce - Agri Shop{% endblock %}
+
+{% block content %}
+<!-- Promotional Carousel Banner -->
+<div id="promoCarousel" class="carousel slide mb-4 rounded-4 shadow-lg overflow-hidden" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    </div>
+    <div class="carousel-inner">
+        <!-- Slide 1: Group Buying Sale -->
+        <div class="carousel-item active" style="background: linear-gradient(135deg, #78c2ad 0%, #56cc9d 100%); color: white;">
+            <div class="position-absolute w-100 h-100 opacity-25" style="background-image: url('data:image/svg+xml;utf8,<svg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"><g fill=\"none\" fill-rule=\"evenodd\"><g fill=\"%23ffffff\" fill-opacity=\"1\"><path d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/></g></g></svg>');"></div>
+            <div class="container-fluid py-4 position-relative">
+                <div class="row align-items-center">
+                    <div class="col-md-5 text-center text-md-start px-md-5 border-end border-white border-opacity-25">
+                        <div class="d-inline-block bg-white fw-bold rounded-pill px-3 py-1 mb-2 shadow-sm" style="color: #ff7851; font-size: 0.9rem;">
+                            ENDS TONIGHT
+                        </div>
+                        <h1 class="display-5 fw-bolder mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">Great Kisan Sale</h1>
+                        <p class="fs-5 mb-0 fw-light">Big savings on Farm Fresh Produce</p>
+                    </div>
+                    <div class="col-md-4 text-center py-3 py-md-0">
+                        <div class="bg-white d-inline-block rounded px-4 py-2 shadow" style="transform: skew(-10deg);">
+                            <div style="transform: skew(10deg);">
+                                <h3 class="mb-0 fw-bold" style="color: #78c2ad;">Extra 20% OFF</h3>
+                                <small class="text-muted fw-bold">On Group Buying</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center text-md-end px-md-5">
+                        <div class="bg-dark text-white p-2 rounded shadow-sm d-inline-block text-start" style="background-color: rgba(0,0,0,0.2) !important;">
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="bi bi-tag-fill text-warning fs-4 me-2"></i>
+                                <div>
+                                    <span class="d-block fw-bold text-white-50" style="font-size: 0.8rem;">Use Promo Code</span>
+                                    <span class="fs-5 fw-bolder text-white">GROUP20</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-white-50 small fw-light">*T&C Apply. Applicable on group orders.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Imperfect Produce -->
+        <div class="carousel-item" style="background: linear-gradient(135deg, #f3969a 0%, #ff7851 100%); color: white;">
+            <div class="position-absolute w-100 h-100 opacity-25" style="background-image: url('data:image/svg+xml;utf8,<svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"2\" cy=\"2\" r=\"2\" fill=\"%23ffffff\" fill-opacity=\"1\"/></svg>');"></div>
+            <div class="container-fluid py-4 position-relative">
+                <div class="row align-items-center">
+                    <div class="col-md-5 text-center text-md-start px-md-5 border-end border-white border-opacity-25">
+                        <div class="d-inline-block bg-white text-dark fw-bold rounded-pill px-3 py-1 mb-2 shadow-sm" style="font-size: 0.9rem;">
+                            <i class="bi bi-star-fill text-warning"></i> NEW INITIATIVE
+                        </div>
+                        <h1 class="display-5 fw-bolder mb-1" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">Ugly but Tasty!</h1>
+                        <p class="fs-5 mb-0 fw-light">Save money & stop food waste</p>
+                    </div>
+                    <div class="col-md-4 text-center py-3 py-md-0">
+                        <div class="bg-white d-inline-block rounded px-4 py-2 shadow" style="transform: skew(-10deg);">
+                            <div style="transform: skew(10deg);">
+                                <h3 class="mb-0 fw-bold" style="color: #ff7851;">FLAT 50% OFF</h3>
+                                <small class="text-muted fw-bold">On Imperfect Produce</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center text-md-end px-md-5">
+                        <div class="text-white">
+                            <i class="bi bi-apple fs-1 d-block mb-1"></i>
+                            <span class="fw-bold d-block">Automatic Discount</span>
+                            <small class="text-white-50">No code required at checkout</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-light shadow-sm">
+            <div class="card-body">
+                <form method="get" class="row g-3 align-items-center">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" name="q" id="searchInput" class="form-control" placeholder="Search produce..." value="{{ request.GET.q }}">
+                            <button type="button" class="btn btn-outline-success" id="voiceBtn" title="Search by Voice (Gujarati)">
+                                <i class="bi bi-mic-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="quality" class="form-select">
+                            <option value="">All Qualities</option>
+                            {% for code, label in quality_choices %}
+                            <option value="{{ code }}" {% if request.GET.quality == code %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" name="organic" value="true" id="organicCheck" {% if request.GET.organic == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="organicCheck">
+                                Organic Only
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select name="sort" class="form-select">
+                            <option value="">Newest</option>
+                            <option value="nearest" {% if request.GET.sort == 'nearest' %}selected{% endif %}>Nearest to me</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-success w-100">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for product in products %}
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="bi bi-image" style="font-size: 3rem;"></i>
+                </div>
+            {% endif %}
+            
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title text-success mb-0">{{ product.name }}</h5>
+                    {% if product.is_organic %}
+                        <span class="badge bg-success"><i class="bi bi-leaf"></i> Organic</span>
+                    {% endif %}
+                </div>
+                <p class="card-text small text-truncate mt-2">{{ product.description }}</p>
+                
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <small class="text-muted">
+                        By <a href="{% url 'farmer_profile' product.farmer.username %}" class="text-decoration-none">{{ product.farmer.username }}</a>
+                        {% if product.farmer.average_rating %}
+                            <span class="text-warning ms-1">⭐ {{ product.farmer.average_rating }}</span>
+                        {% endif %}
+                    </small>
+                    <strong class="fs-5">₹{{ product.price_per_unit }}<small class="text-muted">/{{ product.get_unit_display }}</small></strong>
+                </div>
+            </div>
+            <div class="card-footer bg-white border-top-0 d-grid">
+                <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-success">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <h4 class="text-muted">No produce found matching your criteria.</h4>
+    </div>
+    {% endfor %}
+</div>
+</div>
+
+<!-- Voice Search Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const voiceBtn = document.getElementById('voiceBtn');
+        const searchInput = document.getElementById('searchInput');
+        
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            // Set language to Gujarati for local farmers, it can also understand Hindi/English words mixed in
+            recognition.lang = 'gu-IN'; 
+            
+            voiceBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                voiceBtn.classList.replace('btn-outline-success', 'btn-danger');
+                voiceBtn.innerHTML = '<i class="bi bi-record-circle"></i>';
+                recognition.start();
+            });
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                searchInput.value = transcript;
+                voiceBtn.closest('form').submit();
+            };
+            
+            recognition.onerror = function(event) {
+                voiceBtn.classList.replace('btn-danger', 'btn-outline-success');
+                voiceBtn.innerHTML = '<i class="bi bi-mic-fill"></i>';
+                console.error('Voice recognition error: ' + event.error);
+            };
+            
+            recognition.onend = function() {
+                voiceBtn.classList.replace('btn-danger', 'btn-outline-success');
+                voiceBtn.innerHTML = '<i class="bi bi-mic-fill"></i>';
+            };
+        } else {
+            voiceBtn.style.display = 'none';
+            console.log("Speech recognition not supported in this browser.");
+        }
+    });
+</script>
+{% endblock %}

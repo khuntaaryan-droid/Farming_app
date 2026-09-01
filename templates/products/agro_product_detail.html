@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - Agro Store{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-6 mb-4">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid rounded shadow-sm w-100" alt="{{ product.name }}">
+        {% else %}
+            <div class="bg-secondary text-white rounded d-flex align-items-center justify-content-center h-100 min-vh-50 shadow-sm" style="min-height: 400px;">
+                <i class="bi bi-capsule" style="font-size: 5rem;"></i>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <span class="badge bg-dark mb-2">{{ product.get_category_display }}</span>
+        <h2 class="text-success mb-1 fw-bold">{{ product.name }}</h2>
+        <p class="text-muted mb-3"><i class="bi bi-shop"></i> Sold by: 
+            <strong>{{ product.dealer.get_full_name|default:product.dealer.username }}</strong>
+            {% if product.dealer.phone %}
+                | <i class="bi bi-telephone-fill"></i> {{ product.dealer.phone }}
+            {% endif %}
+        </p>
+        
+        <h3 class="fw-bold mb-4">₹{{ product.price }}</h3>
+        
+        <div class="card bg-light border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold"><i class="bi bi-info-square text-primary"></i> Product Description</h5>
+                <p class="mb-0">{{ product.description|linebreaks }}</p>
+            </div>
+        </div>
+
+        {% if product.usage_guidance %}
+        <div class="card border-warning shadow-sm mb-4">
+            <div class="card-header bg-warning text-dark fw-bold">
+                <i class="bi bi-exclamation-triangle-fill"></i> Usage Guidance & Safety
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ product.usage_guidance|linebreaks }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="d-flex flex-column gap-3 mt-4">
+            <!-- Buy Now Button -->
+            <form method="POST" action="{% url 'add_to_agro_cart' product.id %}">
+                {% csrf_token %}
+                <div class="input-group mb-2">
+                    <span class="input-group-text">Qty</span>
+                    <input type="number" name="quantity" value="1" min="1" class="form-control" style="max-width: 100px;">
+                    <button type="submit" class="btn btn-success flex-grow-1"><i class="bi bi-cart-check"></i> Add to Cart</button>
+                </div>
+            </form>
+            
+            <!-- WhatsApp Guidance Button -->
+            {% if product.dealer.phone %}
+                <a href="https://wa.me/91{{ product.dealer.phone }}?text=Hello%20{{ product.dealer.username }},%20I%20need%20expert%20guidance%20regarding%20{{ product.name }}%20from%20your%20Agro%20Store." 
+                   target="_blank" class="btn btn-success btn-lg shadow" style="background-color: #25D366; border-color: #25D366;">
+                    <i class="bi bi-whatsapp"></i> Ask Expert for Guidance
+                </a>
+            {% else %}
+                <button class="btn btn-secondary btn-lg" disabled><i class="bi bi-whatsapp"></i> Dealer phone not available</button>
+            {% endif %}
+            
+            <a href="{% url 'agro_store' %}" class="btn btn-outline-dark"><i class="bi bi-arrow-left"></i> Back to Store</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

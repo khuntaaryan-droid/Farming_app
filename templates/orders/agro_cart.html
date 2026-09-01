@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Agro Cart - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row mt-4 mb-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-4"><i class="bi bi-cart3"></i> Your Agro Store Cart</h2>
+        
+        {% if not cart_items %}
+        <div class="alert alert-info shadow-sm">
+            <h4>Your agro cart is empty.</h4>
+            <p>Browse the Agro Store to buy fertilizers and medicines.</p>
+            <a href="{% url 'agro_store' %}" class="btn btn-primary mt-2">Go to Agro Store</a>
+        </div>
+        {% else %}
+            {% for item in cart_items %}
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="img-fluid rounded" alt="{{ item.product.name }}">
+                            {% else %}
+                            <div class="bg-secondary text-white rounded d-flex align-items-center justify-content-center" style="height: 60px;">
+                                <i class="bi bi-capsule"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-5">
+                            <h5 class="fw-bold mb-1">{{ item.product.name }}</h5>
+                            <p class="text-muted small mb-0">Dealer: {{ item.product.dealer.get_full_name }}</p>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <span class="badge bg-light text-dark fs-6">{{ item.quantity }} x ₹{{ item.product.price }}</span>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <h5 class="fw-bold text-success mb-0">₹{{ item.total }}</h5>
+                        </div>
+                        <div class="col-md-1 text-end">
+                            <a href="{% url 'remove_from_agro_cart' item.product.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        {% if cart_items %}
+        <div class="card shadow-sm border-0 bg-light sticky-top" style="top: 20px;">
+            <div class="card-body">
+                <h4 class="card-title fw-bold border-bottom pb-2 mb-3">Order Summary</h4>
+                
+                <div class="d-flex justify-content-between mb-3 fs-5">
+                    <span>Total Amount:</span>
+                    <strong class="text-success">₹{{ total_cost }}</strong>
+                </div>
+                
+                <hr>
+                
+                <a href="{% url 'agro_checkout' %}" class="btn btn-success btn-lg w-100 fw-bold shadow-sm">Proceed to Checkout</a>
+                <a href="{% url 'agro_store' %}" class="btn btn-outline-dark w-100 mt-2">Continue Shopping</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

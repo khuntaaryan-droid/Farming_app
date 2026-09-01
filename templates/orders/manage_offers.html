@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Manage Offers - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-12">
+        <h3 class="mb-4">{% if is_farmer %}Offers Received{% else %}My Offers{% endif %}</h3>
+        
+        {% if offers %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>{% if is_farmer %}Buyer{% else %}Farmer{% endif %}</th>
+                            <th>Quantity</th>
+                            <th>Offered Price</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for offer in offers %}
+                        <tr>
+                            <td>{{ offer.product.name }}</td>
+                            <td>{% if is_farmer %}{{ offer.buyer.username }}{% else %}{{ offer.farmer.username }}{% endif %}</td>
+                            <td>{{ offer.quantity }} {{ offer.product.get_unit_display }}</td>
+                            <td><strong class="text-primary">₹{{ offer.offered_price_per_unit }}</strong> <small class="text-muted">(Orig: ₹{{ offer.product.price_per_unit }})</small></td>
+                            <td>
+                                <span class="badge 
+                                    {% if offer.status == 'PENDING' %}bg-warning text-dark
+                                    {% elif offer.status == 'ACCEPTED' %}bg-success
+                                    {% elif offer.status == 'REJECTED' %}bg-danger
+                                    {% endif %}">
+                                    {{ offer.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ offer.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if is_farmer and offer.status == 'PENDING' %}
+                                    <form method="post" action="{% url 'accept_offer' offer.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                    </form>
+                                    <form method="post" action="{% url 'reject_offer' offer.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                                    </form>
+                                {% elif not is_farmer and offer.status == 'ACCEPTED' %}
+                                    <!-- Add to cart with custom price not implemented in this demo, just text -->
+                                    <button class="btn btn-sm btn-primary" onclick="alert('Farmer accepted! Add to cart with special code to claim this price.')">Claim Offer</button>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">No offers found.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row mt-4 justify-content-center">
+    <div class="col-md-10">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'forum_list' %}">Forum</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Post</li>
+            </ol>
+        </nav>
+        
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <h3 class="fw-bold">{{ post.title }}</h3>
+                <div class="text-muted small mb-4 pb-3 border-bottom">
+                    <i class="bi bi-person-circle"></i> <strong>{{ post.author.get_full_name|default:post.author.username }}</strong>
+                    <span class="mx-2">•</span>
+                    {{ post.created_at|date:"F j, Y, g:i a" }}
+                </div>
+                <p class="fs-5" style="white-space: pre-line;">{{ post.content }}</p>
+            </div>
+        </div>
+        
+        <h5 class="fw-bold mb-3"><i class="bi bi-chat-left-text"></i> Replies ({{ post.comments.count }})</h5>
+        
+        <div class="card shadow-sm border-0 mb-5 bg-light">
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <textarea class="form-control" name="content" rows="3" placeholder="Write a reply..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Reply</button>
+                </form>
+            </div>
+        </div>
+        
+        {% for comment in post.comments.all %}
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <strong class="text-primary"><i class="bi bi-person-fill"></i> {{ comment.author.get_full_name|default:comment.author.username }}</strong>
+                    <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                </div>
+                <p class="mb-0" style="white-space: pre-line;">{{ comment.content }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+</div>
+{% endblock %}

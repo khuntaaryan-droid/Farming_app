@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Farm Map - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row mt-3 mb-3">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <h2 class="text-success fw-bold m-0"><i class="bi bi-geo-alt-fill text-danger"></i> Interactive Farm Map</h2>
+        <p class="text-muted m-0">Find fresh produce from farmers near you</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm rounded-4 overflow-hidden border-0">
+            <!-- Leaflet CSS & JS -->
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+            
+            <div id="farmMap" style="height: 600px; width: 100%;"></div>
+            
+            {{ farmer_data_json|json_script:"farmer-data" }}
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Initialize the map centered on Gujarat
+                    var map = L.map('farmMap').setView([22.2587, 71.1924], 7);
+                    
+                    // Add OpenStreetMap tiles
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '© OpenStreetMap'
+                    }).addTo(map);
+                    
+                    // Custom marker icon
+                    var farmIcon = L.icon({
+                        iconUrl: 'https://cdn-icons-png.flaticon.com/512/1390/1390916.png',
+                        iconSize: [38, 38], // size of the icon
+                        iconAnchor: [19, 38], // point of the icon which will correspond to marker's location
+                        popupAnchor: [0, -38] // point from which the popup should open relative to the iconAnchor
+                    });
+
+                    // Parse farmer data
+                    var farmerData = JSON.parse(document.getElementById('farmer-data').textContent);
+                    
+                    // Add markers
+                    farmerData.forEach(function(farmer) {
+                        var popupContent = `
+                            <div class="text-center p-2">
+                                <h6 class="fw-bold text-success mb-1">${farmer.name}</h6>
+                                <p class="small text-muted mb-2"><i class="bi bi-geo-alt"></i> ${farmer.city}</p>
+                                <a href="/farmer/${farmer.username}/" class="btn btn-sm btn-outline-success w-100">View Produce</a>
+                            </div>
+                        `;
+                        
+                        L.marker([farmer.lat, farmer.lng], {icon: farmIcon})
+                            .addTo(map)
+                            .bindPopup(popupContent);
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+{% endblock %}

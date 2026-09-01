@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">{{ title }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        {% for field in form %}
+                            <div class="col-md-6 mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div id="priceAdvisorAlert" class="alert d-none mt-3"></div>
+                    
+                    <div class="mt-4 d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-success">Save Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Live Mandi Prices Board -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 bg-dark text-white">
+            <div class="card-header bg-dark border-bottom border-secondary d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Live APMC Rates</h5>
+                <span class="spinner-grow spinner-grow-sm text-danger" role="status"></span>
+            </div>
+            <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                <ul class="list-group list-group-flush" id="mandiPricesList">
+                    <!-- JS will populate this -->
+                </ul>
+            </div>
+            <div class="card-footer bg-dark border-top border-secondary text-center">
+                <small class="text-muted">Prices updated every hour</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const priceRefs = {{ price_refs_json|safe }};
+        const nameInput = document.getElementById("id_name");
+        const priceInput = document.getElementById("id_price_per_unit");
+        const alertBox = document.getElementById("priceAdvisorAlert");
+
+        function checkPrice() {
+            const cropName = nameInput.value.toLowerCase().trim();
+            const enteredPrice = parseFloat(priceInput.value);
+            
+            // Look for a matching crop reference
+            let match = null;
+            for (let ref in priceRefs) {
+                if (cropName.includes(ref)) {
+                    match = {name: ref, price: priceRefs[ref]};
+                    break;
+                }
+            }
+
+            if (match && !isNaN(enteredPrice)) {
+                alertBox.classList.remove("d-none", "alert-warning", "alert-info");
+                const avgPrice = match.price;
+                const lowThreshold = avgPrice * 0.8; // 20% below average
+
+                if (enteredPrice < lowThreshold) {
+                    alertBox.classList.add("alert-warning");
+                    alertBox.innerHTML = `<strong><i class="bi bi-exclamation-triangle"></i> Price Warning:</strong> Your price of ₹${enteredPrice} is significantly below the regional average of ₹${avgPrice.toFixed(2)} for ${match.name}. Are you sure?`;
+                } else {
+                    alertBox.classList.add("alert-info");
+                    alertBox.innerHTML = `<strong><i class="bi bi-info-circle"></i> Market Trend:</strong> The average regional price for ${match.name} is ₹${avgPrice.toFixed(2)}. Your price is competitive!`;
+                }
+            } else {
+                alertBox.classList.add("d-none");
+            }
+        }
+
+        nameInput.addEventListener("input", checkPrice);
+        priceInput.addEventListener("input", checkPrice);
+        
+        // Populate Mandi Board
+        const mandiList = document.getElementById("mandiPricesList");
+        for (let crop in priceRefs) {
+            // Add some mock randomization to make it look "live"
+            const trend = Math.random() > 0.5 ? 'up text-success' : 'down text-danger';
+            mandiList.innerHTML += `
+                <li class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                    <span class="text-capitalize">${crop}</span>
+                    <span class="fw-bold">₹${priceRefs[crop]} <i class="bi bi-arrow-${trend}"></i></span>
+                </li>
+            `;
+        }
+    });
+</script>
+{% endblock %}

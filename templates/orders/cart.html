@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Your Cart - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h3 class="mb-4">Your Shopping Cart</h3>
+        
+        {% if cart_items %}
+        <div class="card shadow-sm mb-4">
+            <ul class="list-group list-group-flush">
+                {% for item in cart_items %}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <div class="d-flex align-items-center">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-secondary text-white rounded me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-image"></i>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h6 class="mb-0">{{ item.product.name }}</h6>
+                            <small class="text-muted">
+                                ₹{{ item.effective_price }} per {{ item.product.get_unit_display }}
+                                {% if item.effective_price < item.product.price_per_unit %}
+                                    <span class="badge bg-warning text-dark ms-1">Bulk Discount Applied</span>
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <span class="me-3 fw-bold">Qty: {{ item.quantity }}</span>
+                        <span class="me-3 fw-bold text-success">₹{{ item.total }}</span>
+                        
+                        <form method="post" action="{% url 'remove_from_cart' item.product.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Your cart is empty. <a href="{% url 'product_list' %}" class="alert-link">Continue shopping</a>.
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Delivery & Logistics</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-1 text-muted">Estimated Delivery Cost based on your location:</p>
+                <h4 class="text-success">₹{{ delivery_cost }}</h4>
+                <small class="text-muted">This is added to your order total.</small>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Order Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-3">
+                    <span>Items Total</span>
+                    <strong>₹{{ total_cost }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-3 text-muted">
+                    <span>Estimated Delivery</span>
+                    <strong>₹{{ delivery_cost }}</strong>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="fs-5">Grand Total</span>
+                    <strong class="fs-5 text-success">₹{{ grand_total }}</strong>
+                </div>
+                
+                {% if cart_items %}
+                <a href="{% url 'checkout' %}" class="btn btn-success w-100 btn-lg">Proceed to Checkout</a>
+                {% else %}
+                <button class="btn btn-secondary w-100 btn-lg" disabled>Checkout</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

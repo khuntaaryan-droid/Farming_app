@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Government Schemes - Agri Shop{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-12 mb-4 text-center">
+        <h2 class="fw-bold text-success"><i class="bi bi-bank"></i> Government Schemes & Subsidies</h2>
+        <p class="text-muted">Stay updated with the latest schemes for farmers to boost your agricultural income.</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for scheme in schemes %}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0 h-100 border-start border-success border-5">
+            <div class="card-body">
+                <h4 class="card-title fw-bold text-primary">{{ scheme.title }}</h4>
+                <p class="card-text">{{ scheme.description }}</p>
+                
+                <ul class="list-unstyled mb-4">
+                    {% if scheme.deadline %}
+                    <li class="mb-2"><i class="bi bi-calendar-x text-danger"></i> <strong>Deadline:</strong> {{ scheme.deadline|date:"F j, Y" }}</li>
+                    {% endif %}
+                    {% if scheme.required_documents %}
+                    <li><i class="bi bi-file-earmark-text text-info"></i> <strong>Documents:</strong> {{ scheme.required_documents }}</li>
+                    {% endif %}
+                </ul>
+                
+                {% if scheme.link %}
+                <a href="{{ scheme.link }}" target="_blank" class="btn btn-outline-success">Apply / Learn More <i class="bi bi-box-arrow-up-right"></i></a>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-white text-muted small">
+                Added on: {{ scheme.created_at|date:"M d, Y" }}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">No schemes available at the moment. Please check back later.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
