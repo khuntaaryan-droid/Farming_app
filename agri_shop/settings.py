@@ -148,7 +148,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Redirects after login/logout
 LOGIN_REDIRECT_URL = '/'
-"""
 LOGOUT_REDIRECT_URL = '/'
 
 # Razorpay Settings
@@ -162,12 +161,13 @@ GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 import cloudinary
 import cloudinary_storage
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
-}
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+if os.environ.get('CLOUDINARY_CLOUD_NAME'):
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+        'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
+        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+    }
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Static Files Settings for Production
 STATIC_ROOT = BASE_DIR / 'staticfiles'
